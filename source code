@@ -1,0 +1,835 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+    local Window = Rayfield:CreateWindow({
+   Name = "[⚡] Void Hub | discord.gg/Z6anqdgpe4",
+   LoadingTitle = "[⚡] Void Hub | discord.gg/Z6anqdgpe4",
+   LoadingSubtitle = "by Void",
+   ConfigurationSaving = {
+      Enabled = false,
+      FolderName = nil, -- Create a custom folder for your hub/game
+      FileName = "VoidHub"
+   },
+   Discord = {
+      Enabled = true,
+      Invite = "Z6anqdgpe4", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ABCD would be ABCD
+      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+   },
+   KeySystem = true, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "VoidHub Key",
+      Subtitle = "KEY IS IN THE DISCORD NO LINKVERTISE",
+      Note = "Join the Discord via the misc tab",
+      FileName = "voidhubkey", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = true, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"https://pastebin.com/raw/5rZuKGwq"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+   }
+})
+
+    local MainTab = Window:CreateTab("🔫 Combat", nil) -- Title, Image
+    local MainSection = MainTab:CreateSection("Main")
+
+    Rayfield:Notify({
+   Title = "Execution Successful",
+   Content = "Enjoy VoidHub",
+   Duration = 5,
+   Image = 4483362458,
+   Actions = { -- Notification Buttons
+      Ignore = {
+         Name = "Alrighty",
+         Callback = function()
+         print("The user tapped Okay!")
+      end
+   },
+},
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Aimbot",
+   Callback = function()
+-- Place this script in StarterPlayerScripts or StarterGui
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local player = Players.LocalPlayer
+local camera = workspace.CurrentCamera
+local locking = false
+local targetPlayer
+
+local function getNearestEnemyPlayer()
+    local nearestPlayer = nil
+    local shortestDistance = math.huge
+
+    for _, otherPlayer in ipairs(Players:GetPlayers()) do
+        -- Check if the player is not the local player and has a character
+        if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            -- Check if they are on a different team
+            if otherPlayer.Team ~= player.Team then
+                local distance = (player.Character.HumanoidRootPart.Position - otherPlayer.Character.HumanoidRootPart.Position).Magnitude
+                if distance < shortestDistance then
+                    shortestDistance = distance
+                    nearestPlayer = otherPlayer
+                end
+            end
+        end
+    end
+
+    return nearestPlayer
+end
+
+local function onInputBegan(input, gameProcessed)
+    if gameProcessed then return end
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then -- Right-click
+        targetPlayer = getNearestEnemyPlayer()
+        locking = true
+    end
+end
+
+local function onInputEnded(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then -- Right-click release
+        locking = false
+        targetPlayer = nil
+    end
+end
+
+local function onRenderStep()
+    if locking and targetPlayer and targetPlayer.Character then
+        local targetPosition = targetPlayer.Character.HumanoidRootPart.Position
+        local cameraCFrame = CFrame.new(camera.CFrame.Position, targetPosition)
+        camera.CFrame = cameraCFrame
+    end
+end
+
+UserInputService.InputBegan:Connect(onInputBegan)
+UserInputService.InputEnded:Connect(onInputEnded)
+game:GetService("RunService").RenderStepped:Connect(onRenderStep)
+
+
+
+   end,
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Silent Aim (SLIGHT)",
+   Callback = function()
+       local Players = game:GetService("Players")
+local localPlayer = Players.LocalPlayer
+local mouse = localPlayer:GetMouse()
+
+function onRenderStep()
+    local closestTarget = nil
+    local closestDistance = 800  -- Adjust this distance as needed
+
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= localPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local targetPosition = player.Character.HumanoidRootPart.Position
+            local distance = (targetPosition - workspace.CurrentCamera.CFrame.Position).magnitude
+
+            if distance < closestDistance then
+                closestDistance = distance
+                closestTarget = targetPosition
+            end
+        end
+    end
+
+    if closestTarget then
+        local aimDirection = (closestTarget - workspace.CurrentCamera.CFrame.Position).unit
+        local targetPoint = workspace.CurrentCamera.CFrame.Position + aimDirection * 10  -- Adjust this multiplier as needed
+        mouse.Hit = CFrame.new(targetPoint)
+    end
+end
+
+game:GetService("RunService").RenderStepped:Connect(onRenderStep)
+
+   end,
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Normal Lock (T)",
+   Callback = function()
+       -- Place this script in StarterPlayerScripts or StarterGui
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local player = Players.LocalPlayer
+local camera = workspace.CurrentCamera
+local locking = false
+local targetPlayer
+
+local function getNearestPlayer()
+    local nearestPlayer = nil
+    local shortestDistance = math.huge
+
+    for _, otherPlayer in ipairs(Players:GetPlayers()) do
+        if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            local distance = (player.Character.HumanoidRootPart.Position - otherPlayer.Character.HumanoidRootPart.Position).Magnitude
+            if distance < shortestDistance then
+                shortestDistance = distance
+                nearestPlayer = otherPlayer
+            end
+        end
+    end
+
+    return nearestPlayer
+end
+
+local function toggleLockOn()
+    if locking then
+        locking = false
+        targetPlayer = nil
+    else
+        targetPlayer = getNearestPlayer()
+        locking = true
+    end
+end
+
+local function onInputBegan(input, gameProcessed)
+    if gameProcessed then return end
+    if input.KeyCode == Enum.KeyCode.T then
+        toggleLockOn()
+    end
+end
+
+local function onRenderStep()
+    if locking and targetPlayer and targetPlayer.Character then
+        local targetPosition = targetPlayer.Character.HumanoidRootPart.Position
+        local cameraCFrame = CFrame.new(camera.CFrame.Position, targetPosition)
+        camera.CFrame = cameraCFrame
+    end
+end
+
+UserInputService.InputBegan:Connect(onInputBegan)
+game:GetService("RunService").RenderStepped:Connect(onRenderStep)
+
+   end,
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Da Hood Lock (G)",
+   Callback = function()
+       -- Place this script in StarterPlayerScripts or StarterGui
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local camera = workspace.CurrentCamera
+local locking = false
+local targetPlayer
+
+local function getNearestPlayer()
+    local nearestPlayer = nil
+    local shortestDistance = math.huge
+
+    for _, otherPlayer in ipairs(Players:GetPlayers()) do
+        if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            local distance = (player.Character.HumanoidRootPart.Position - otherPlayer.Character.HumanoidRootPart.Position).Magnitude
+            if distance < shortestDistance then
+                shortestDistance = distance
+                nearestPlayer = otherPlayer
+            end
+        end
+    end
+
+    return nearestPlayer
+end
+
+local function toggleLockOn()
+    if locking then
+        locking = false
+        targetPlayer = nil
+    else
+        targetPlayer = getNearestPlayer()
+        locking = true
+    end
+end
+
+local function leadTarget(target)
+    local targetVelocity = target.Character.HumanoidRootPart.Velocity
+    local futurePosition = target.Character.HumanoidRootPart.Position + targetVelocity * 0.2 -- Adjust the multiplier for leading
+    return futurePosition
+end
+
+local function onInputBegan(input, gameProcessed)
+    if gameProcessed then return end
+    if input.KeyCode == Enum.KeyCode.G then
+        toggleLockOn()
+    end
+end
+
+local function onRenderStep()
+    if locking and targetPlayer and targetPlayer.Character then
+        local targetPosition = leadTarget(targetPlayer)
+        local cameraCFrame = CFrame.new(camera.CFrame.Position, targetPosition)
+        camera.CFrame = cameraCFrame
+    end
+end
+
+UserInputService.InputBegan:Connect(onInputBegan)
+RunService.RenderStepped:Connect(onRenderStep)
+
+   end,
+})
+
+local VisualTab = Window:CreateTab("👓 Visuals", nil) -- Title, Image
+
+local Button = VisualTab:CreateButton({
+   Name = "Chams",
+   Callback = function()
+      local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local function createESP(character)
+    if character then
+        local highlight = Instance.new("Highlight")
+        highlight.Adornee = character
+        highlight.FillColor = Color3.new(1, 0, 0) -- Red color
+        highlight.OutlineColor = Color3.new(1, 1, 1) -- White outline
+        highlight.FillTransparency = 0.5
+        highlight.OutlineTransparency = 0
+        highlight.Parent = character
+    end
+end
+
+local function removeESP(character)
+    if character then
+        local highlight = character:FindFirstChildOfClass("Highlight")
+        if highlight then
+            highlight:Destroy()
+        end
+    end
+end
+
+local function refreshESP()
+    while true do
+        for _, player in ipairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer then
+                if player.Character then
+                    removeESP(player.Character) -- Remove existing ESP
+                    createESP(player.Character)  -- Create new ESP
+                end
+            end
+        end
+        wait(1) -- Refresh every second
+    end
+end
+
+-- Create ESP for existing players
+for _, player in ipairs(Players:GetPlayers()) do
+    if player ~= LocalPlayer then
+        player.CharacterAdded:Connect(function(character)
+            createESP(character)
+        end)
+        createESP(player.Character) -- Initial ESP
+    end
+end
+
+-- Create ESP for new players that join
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function(character)
+        createESP(character)
+    end)
+end)
+
+-- Start refreshing ESP
+refreshESP()
+
+   end,
+})
+
+local Button = VisualTab:CreateButton({
+   Name = "Box ESP",
+   Callback = function()
+        local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+-- Function to create a box ESP
+local function createESP(character)
+    if not character or not character:FindFirstChild("HumanoidRootPart") then return end
+
+    local existingESP = character.HumanoidRootPart:FindFirstChildOfClass("BoxHandleAdornment")
+    if existingESP then
+        existingESP:Destroy()
+    end
+
+    local box = Instance.new("BoxHandleAdornment")
+    box.Size = Vector3.new(2, 5, 1) -- Adjust size as needed
+    box.Color3 = Color3.new(1, 0, 0) -- Color of the box
+    box.Transparency = 0.5
+    box.AlwaysOnTop = true
+    box.ZIndex = 10
+    box.Adornee = character.HumanoidRootPart
+    
+    box.Parent = character.HumanoidRootPart
+end
+
+-- Function to refresh ESP for all players
+local function refreshESP()
+    while true do
+        for _, player in pairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer and player.Character then
+                createESP(player.Character)
+            end
+        end
+        wait(1) -- Refresh every 1 second
+    end
+end
+
+-- Start refreshing ESP
+refreshESP()
+
+-- Connect to player added event
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function(character)
+        wait(1) -- Wait for the character to fully load
+        createESP(character)
+    end)
+end)
+
+-- Connect to character added event for local player
+LocalPlayer.CharacterAdded:Connect(function(character)
+    wait(1) -- Wait for the character to fully load
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character then
+            createESP(player.Character)
+        end
+    end
+end)
+
+-- Initial setup for existing players
+for _, player in pairs(Players:GetPlayers()) do
+    if player ~= LocalPlayer and player.Character then
+        createESP(player.Character)
+    end
+end
+
+   end,
+})
+
+local Button = VisualTab:CreateButton({
+   Name = "Skeleton ESP (NW)",
+   Callback = function()
+   -- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = VisualTab:CreateButton({
+   Name = "Nametags (BUGGY)",
+   Callback = function()
+       -- Place this script in StarterPlayerScripts or StarterGui
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+-- Function to create nametags
+local function createNametag(player)
+    local character = player.Character or player.CharacterAdded:Wait()
+    local head = character:WaitForChild("Head")
+
+    -- Create a BillboardGui to display the nametag
+    local nametag = Instance.new("BillboardGui")
+    nametag.Adornee = head
+    nametag.Size = UDim2.new(0, 200, 0, 50)
+    nametag.StudsOffset = Vector3.new(0, 3, 0) -- Adjust height above head
+    nametag.AlwaysOnTop = true
+
+    -- Create a TextLabel to show the player's name
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Text = player.Name
+    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.BackgroundTransparency = 1
+    textLabel.TextColor3 = Color3.new(1, 1, 1) -- White text
+    textLabel.TextScaled = true
+    textLabel.Parent = nametag
+
+    nametag.Parent = head
+end
+
+-- Function to update all nametags
+local function updateNametags()
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player.Character then
+            local head = player.Character:FindFirstChild("Head")
+            if head and not head:FindFirstChild("BillboardGui") then
+                createNametag(player)
+            end
+        end
+    end
+end
+
+-- Refresh nametags every second
+RunService.Heartbeat:Connect(function()
+    updateNametags()
+end)
+
+-- Initial setup for existing players
+for _, player in ipairs(Players:GetPlayers()) do
+    if player.Character then
+        createNametag(player)
+    end
+end
+
+-- Listen for new players joining
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function()
+        createNametag(player)
+    end)
+end)
+
+   end,
+})
+
+local MovementTab = Window:CreateTab('🏃 Movement', nil)
+local Slider = MovementTab:CreateSlider({
+   Name = "Walk Speed",
+   Range = {0, 300},
+   Increment = 1,
+   Suffix = "Speed",
+   CurrentValue = 16,
+   Flag = "example", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = (Value)
+   end,
+})
+
+local Slider = MovementTab:CreateSlider({
+   Name = "Jump Power",
+   Range = {0, 300},
+   Increment = 1,
+   Suffix = "Jump Power",
+   CurrentValue = 47,
+   Flag = "example", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+        game.Players.LocalPlayer.Character.Humanoid.JumpPower = (Value)
+   end,
+})
+
+local Button = MovementTab:CreateButton({
+   Name = "Infinite Jump",
+   Callback = function()
+     -- Place this script in StarterPlayerScripts or StarterGui
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+local canJump = true
+
+-- Function to enable infinite jump
+local function onJumpRequest()
+    if canJump then
+        humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+    end
+end
+
+-- Listen for jump requests
+UserInputService.JumpRequest:Connect(onJumpRequest)
+
+-- Prevent the player from touching the ground
+humanoid.StateChanged:Connect(function(_, newState)
+    if newState == Enum.HumanoidStateType.Freefall then
+        canJump = true
+    else
+        canJump = false
+    end
+end)
+  
+   end,
+})
+
+local Button = MovementTab:CreateButton({
+   Name = "Fly (E)",
+   Callback = function()
+       -- Place this script in StarterPlayerScripts or StarterGui
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local flying = false
+local speed = 50
+
+local function toggleFly()
+    flying = not flying
+
+    if flying then
+        humanoid.PlatformStand = true -- Prevents player from falling
+    else
+        humanoid.PlatformStand = false
+    end
+end
+
+local function onInputBegan(input, gameProcessed)
+    if gameProcessed then return end
+    if input.KeyCode == Enum.KeyCode.E then
+        toggleFly()
+    end
+end
+
+local function onRenderStep()
+    if flying then
+        local direction = Vector3.new()
+
+        if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+            direction = direction + workspace.CurrentCamera.CFrame.LookVector
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+            direction = direction - workspace.CurrentCamera.CFrame.LookVector
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+            direction = direction - workspace.CurrentCamera.CFrame.RightVector
+        end
+        if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+            direction = direction + workspace.CurrentCamera.CFrame.RightVector
+        end
+
+        -- Normalize direction and apply speed
+        if direction.Magnitude > 0 then
+            direction = direction.Unit * speed
+        end
+
+        character:SetPrimaryPartCFrame(character.PrimaryPart.CFrame + direction * RunService.RenderStepped:Wait())
+    end
+end
+
+UserInputService.InputBegan:Connect(onInputBegan)
+RunService.RenderStepped:Connect(onRenderStep)
+
+   end,
+})
+
+local Button = MovementTab:CreateButton({
+   Name = "Da Hood Fly (X)",
+   Callback = function()
+       local plr = game.Players.LocalPlayer
+local mouse = plr:GetMouse()
+
+localplayer = plr
+
+if workspace:FindFirstChild("Core") then
+workspace.Core:Destroy()
+end
+
+local Core = Instance.new("Part")
+Core.Name = "Core"
+Core.Size = Vector3.new(0.05, 0.05, 0.05)
+
+spawn(function()
+Core.Parent = workspace
+local Weld = Instance.new("Weld", Core)
+Weld.Part0 = Core
+Weld.Part1 = localplayer.Character.LowerTorso
+Weld.C0 = CFrame.new(0, 0, 0)
+end)
+
+workspace:WaitForChild("Core")
+
+local torso = workspace.Core
+flying = true
+local speed=10
+local keys={a=false,d=false,w=false,s=false}
+local e1
+local e2
+local function start()
+local pos = Instance.new("BodyPosition",torso)
+local gyro = Instance.new("BodyGyro",torso)
+pos.Name="EPIXPOS"
+pos.maxForce = Vector3.new(math.huge, math.huge, math.huge)
+pos.position = torso.Position
+gyro.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+gyro.cframe = torso.CFrame
+repeat
+wait()
+localplayer.Character.Humanoid.PlatformStand=true
+local new=gyro.cframe - gyro.cframe.p + pos.position
+if not keys.w and not keys.s and not keys.a and not keys.d then
+speed=5
+end
+if keys.w then
+new = new + workspace.CurrentCamera.CoordinateFrame.lookVector * speed
+speed=speed+0
+end
+if keys.s then
+new = new - workspace.CurrentCamera.CoordinateFrame.lookVector * speed
+speed=speed+0
+end
+if keys.d then
+new = new * CFrame.new(speed,0,0)
+speed=speed+0
+end
+if keys.a then
+new = new * CFrame.new(-speed,0,0)
+speed=speed+0
+end
+if speed>10 then
+speed=5
+end
+pos.position=new.p
+if keys.w then
+gyro.cframe = workspace.CurrentCamera.CoordinateFrame*CFrame.Angles(-math.rad(speed*0),0,0)
+elseif keys.s then
+gyro.cframe = workspace.CurrentCamera.CoordinateFrame*CFrame.Angles(math.rad(speed*0),0,0)
+else
+gyro.cframe = workspace.CurrentCamera.CoordinateFrame
+end
+until flying == false
+if gyro then gyro:Destroy() end
+if pos then pos:Destroy() end
+flying=false
+localplayer.Character.Humanoid.PlatformStand=false
+speed=10
+end
+e1=mouse.KeyDown:connect(function(key)
+if not torso or not torso.Parent then flying=false e1:disconnect() e2:disconnect() return end
+if key=="w" then
+keys.w=true
+elseif key=="s" then
+keys.s=true
+elseif key=="a" then
+keys.a=true
+elseif key=="d" then
+keys.d=true
+elseif key=="x" then
+if flying==true then
+flying=false
+else
+flying=true
+start()
+end
+end
+end)
+e2=mouse.KeyUp:connect(function(key)
+if key=="w" then
+keys.w=false
+elseif key=="s" then
+keys.s=false
+elseif key=="a" then
+keys.a=false
+elseif key=="d" then
+keys.d=false
+end
+end)
+start()
+   end,
+})
+
+
+local MiscTab = Window:CreateTab("🎲 Misc", 4483362458) -- Title, Image
+
+local Button = MiscTab:CreateButton({
+   Name = "TP To Player",
+   Callback = function()
+       -- Place this script in StarterPlayerScripts or StarterGui
+
+local Players = game:GetService("Players")
+local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
+local ScreenGui = Instance.new("ScreenGui", PlayerGui)
+local TextBox = Instance.new("TextBox")
+local TextLabel = Instance.new("TextLabel")
+
+-- Set up the TextBox
+TextBox.Size = UDim2.new(0, 300, 0, 50)
+TextBox.Position = UDim2.new(0.5, -150, 0.5, -25)
+TextBox.PlaceholderText = "Enter display name"
+TextBox.TextScaled = true
+TextBox.BackgroundColor3 = Color3.new(1, 1, 1)
+TextBox.BackgroundTransparency = 0.5
+TextBox.BorderSizePixel = 0
+TextBox.TextColor3 = Color3.new(0, 0, 0)
+TextBox.Parent = ScreenGui
+
+-- Set up rounded corners
+local uiCorner = Instance.new("UICorner", TextBox)
+uiCorner.CornerRadius = UDim.new(0, 12)
+
+-- Set up a label for instructions
+TextLabel.Size = UDim2.new(0, 300, 0, 50)
+TextLabel.Position = UDim2.new(0.5, -150, 0.4, -25)
+TextLabel.Text = "Type a display name and press Enter"
+TextLabel.TextScaled = true
+TextLabel.BackgroundTransparency = 1
+TextLabel.TextColor3 = Color3.new(1, 1, 1)
+TextLabel.Parent = ScreenGui
+
+local function teleportToPlayer(displayName)
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player.DisplayName:lower() == displayName:lower() then
+            if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                local targetPosition = player.Character.HumanoidRootPart.Position
+                -- Teleport your character's HumanoidRootPart
+                Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(targetPosition)
+            end
+            break
+        end
+    end
+end
+
+TextBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        teleportToPlayer(TextBox.Text)
+        TextBox.Text = "" -- Clear the text box after teleporting
+        ScreenGui.Enabled = false -- Hide the GUI
+    end
+end)
+
+   end,
+})
+
+local Button = MiscTab:CreateButton({
+   Name = "Comp FOV",
+   Callback = function()
+local player = game.Players.LocalPlayer
+local camera = workspace.CurrentCamera
+
+-- Function to set FOV
+local function setFOV()
+    camera.FieldOfView = 105
+end
+
+-- Connect to events to maintain FOV
+player.CharacterAdded:Connect(function()
+    wait(0.01) -- Wait for the character to load
+    setFOV() -- Set FOV after respawn
+end)
+
+while true do
+    setFOV()
+    wait(0.000000000000000001) -- Update FOV every 0.1 seconds
+end
+
+
+   end,
+})
+
+local Button = MiscTab:CreateButton({
+   Name = "Normal FOV",
+   Callback = function()
+local player = game.Players.LocalPlayer
+local camera = workspace.CurrentCamera
+
+-- Function to set FOV
+local function setFOV()
+    camera.FieldOfView = 70
+end
+
+-- Connect to events to maintain FOV
+player.CharacterAdded:Connect(function()
+    wait(1) -- Wait for the character to load
+    setFOV() -- Set FOV after respawn
+end)
+
+while true do
+    setFOV()
+    wait(0.1) -- Update FOV every 0.001 seconds
+end
+
+
+   end,
+})
